@@ -132,6 +132,29 @@
             #contact .map-card,
             #contact .contact-enquiry-panel { padding: 18px; }
         }
+
+        /* Ensure the quotation popup opens reliably from every quote button. */
+        .quotation-modal[hidden] { display: none !important; }
+        .quotation-modal.is-open {
+            display: flex !important;
+            position: fixed;
+            inset: 0;
+            z-index: 11000;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+        .quotation-modal.is-open .quotation-overlay {
+            position: absolute;
+            inset: 0;
+        }
+        .quotation-modal.is-open .quotation-dialog {
+            position: relative;
+            z-index: 1;
+            width: min(680px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -320,7 +343,7 @@
                 make every learning and working environment more productive.
             </p>
             <p>
-                With six years of business experience, we focus on supplying
+                With 10 years of business experience, we focus on supplying
                 board solutions for educational institutions, offices and
                 organisations.
             </p>
@@ -640,6 +663,44 @@
         const quotationTrigger = document.querySelector(".open-quotation");
         if (quotationTrigger) quotationTrigger.click();
         else document.getElementById("quotationModal")?.removeAttribute("hidden");
+    });
+})();
+</script>
+
+
+<script>
+/* Reliable open/close behaviour for the quotation popup.
+   The existing js/script.js remains responsible for product selection,
+   validation and submitting the enquiry to the configured endpoint. */
+(() => {
+    const quotationModal = document.getElementById("quotationModal");
+    if (!quotationModal) return;
+
+    function openQuotation(event) {
+        if (event) event.preventDefault();
+        quotationModal.hidden = false;
+        quotationModal.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeQuotation() {
+        quotationModal.classList.remove("is-open");
+        quotationModal.hidden = true;
+        document.body.style.overflow = "";
+    }
+
+    document.querySelectorAll(".open-quotation").forEach(trigger => {
+        trigger.addEventListener("click", openQuotation);
+    });
+
+    quotationModal.querySelectorAll("[data-close-quotation]").forEach(trigger => {
+        trigger.addEventListener("click", closeQuotation);
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !quotationModal.hidden) {
+            closeQuotation();
+        }
     });
 })();
 </script>
