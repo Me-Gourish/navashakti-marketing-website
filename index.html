@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Navashakti Marketing - Quality boards for classrooms, institutions and modern workspaces. Inspiring Better Learning.">
+    <title>Navashakti Marketing | Inspiring Better Learning</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+
+    <style>
+        /* Product details popup — inherits Navashakti's existing navy/green palette */
+        .product-details-modal[hidden] { display: none !important; }
+        .product-details-modal { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 18px; }
+        .product-details-backdrop { position: absolute; inset: 0; background: rgba(16,43,70,.68); backdrop-filter: blur(4px); }
+        .product-details-dialog { position: relative; width: min(680px, 100%); max-height: min(88vh, 760px); overflow: auto; background: #fff; color: #172b3d; border: 1px solid #e2e9e4; border-radius: 20px; padding: 30px; box-shadow: 0 24px 70px rgba(16,43,70,.28); animation: productPopupIn .22s ease-out; }
+        .product-details-dialog h2 { color: #102b46; margin: 8px 42px 10px 0; }
+        .product-details-dialog .product-modal-intro { color: #657586; line-height: 1.7; margin: 0 0 20px; }
+        .product-details-close { position: absolute; top: 14px; right: 15px; width: 38px; height: 38px; border: 1px solid #e2e9e4; border-radius: 50%; background: #f6f8f4; color: #102b46; font-size: 23px; cursor: pointer; }
+        .product-details-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+        .product-details-item { background: #f6f8f4; border: 1px solid #e2e9e4; border-radius: 12px; padding: 15px; }
+        .product-details-item strong { display: block; color: #16834a; font-size: 12px; margin-bottom: 7px; }
+        .product-details-item p { color: #526477; font-size: 13px; line-height: 1.6; margin: 0; }
+        .product-details-disclaimer { color: #657586; font-size: 12px; line-height: 1.6; margin: 18px 0; }
+        .product-details-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .product-details-actions button { cursor: pointer; }
+        @keyframes productPopupIn { from { opacity: 0; transform: translateY(12px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @media (max-width: 560px) { .product-details-dialog { padding: 24px 18px; } .product-details-grid { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { .product-details-dialog { animation: none; } }
+
+        /* Compact contact layout: enquiry panel on the left, address and map on the right */
+        #contact.contact-section {
+            display: grid;
+            grid-template-columns: minmax(260px, 0.75fr) minmax(0, 2fr);
+            gap: 26px;
+            align-items: start;
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 45px 5%;
+        }
+        #contact .contact-enquiry-panel {
+            width: 100%;
+            max-width: 360px;
+            margin: 0;
+            padding: 25px;
+            align-self: center;
+            background: #fff;
+            border: 1px solid #e2e9e4;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(16,43,70,.06);
+        }
+        #contact .contact-enquiry-panel h3 {
+            color: #102b46;
+            font-size: 22px;
+            margin: 12px 0 10px;
+        }
+        #contact .contact-enquiry-panel p {
+            color: #687988;
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0;
+        }
+        #contact .contact-information { min-width: 0; }
+        #contact .contact-section-heading { margin-bottom: 18px; }
+        #contact .contact-section-heading h2 { margin-top: 12px; }
+        #contact .contact-details {
+            display: grid;
+            grid-template-columns: minmax(230px, .85fr) minmax(280px, 1.15fr);
+            gap: 16px;
+            align-items: stretch;
+        }
+        #contact .address-card,
+        #contact .map-card {
+            min-width: 0;
+            margin: 0;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e2e9e4;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(16,43,70,.05);
+        }
+        #contact .address-card h3,
+        #contact .map-card h3 {
+            color: #102b46;
+            font-size: 16px;
+            margin: 0 0 14px;
+        }
+        #contact .address-card p {
+            color: #687988;
+            font-size: 13px;
+            line-height: 1.9;
+            margin: 0;
+        }
+        #contact .gst {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e9e4;
+            color: #102b46;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        #contact .map-card iframe {
+            display: block;
+            width: 100%;
+            height: 220px;
+            border: 0;
+            border-radius: 12px;
+        }
+        #contact .map-card a {
+            display: inline-flex;
+            margin-top: 12px;
+            color: #16834a;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        #contact .map-card a:hover { color: #102b46; }
+
+        @media (max-width: 950px) {
+            #contact.contact-section { grid-template-columns: 1fr; }
+            #contact .contact-enquiry-panel { max-width: 100%; order: 2; }
+            #contact .contact-information { order: 1; }
+        }
+        @media (max-width: 620px) {
+            #contact.contact-section { padding: 40px 5%; gap: 20px; }
+            #contact .contact-details { grid-template-columns: 1fr; }
+            #contact .map-card iframe { height: 210px; }
+            #contact .address-card,
+            #contact .map-card,
+            #contact .contact-enquiry-panel { padding: 18px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <a href="#home" class="brand">
+        <svg class="brand-logo" viewBox="0 0 72 72" aria-label="Navashakti logo">
+            <path d="M35 57C19 55 10 44 12 30c13-1 24 8 23 27Z" fill="#102B46"/>
+            <path d="M37 57c-1-18 9-34 25-39 2 17-7 33-25 39Z" fill="#16834A"/>
+            <path d="M36 57c-8-14-7-29 2-40 10 12 10 27-2 40Z" fill="#75B843"/>
+            <circle cx="37" cy="12" r="4" fill="#102B46"/>
+        </svg>
+        <span class="brand-text">
+            <strong>Navashakti</strong>
+            <small>MARKETING</small>
+            <em>INSPIRING BETTER LEARNING</em>
+        </span>
+    </a>
+
+    <nav class="navigation">
+        <a href="#home">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About Us</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <a href="#contact" class="header-button open-quotation">Get a Quote <span>↗</span></a>
+</header>
+
+<main>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="eyebrow">QUALITY BOARDS · TRUSTED SERVICE</div>
+            <h1>Inspiring<br><em>Better Learning.</em></h1>
+            <p>
+                Thoughtfully selected boards and display solutions
+                for classrooms, educational institutions and modern workspaces.
+            </p>
+            <div class="hero-actions">
+                <a href="#products" class="button button-primary">Explore Products ↗</a>
+                <a href="#contact" class="button button-light open-quotation">Request a Quote</a>
+            </div>
+            <div class="hero-highlights">
+                <span>✓ Quality-focused products</span>
+                <span>✓ Reliable support</span>
+                <span>✓ 6 years of experience</span>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <img
+                src="https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1200&q=85"
+                alt="Educational classroom environment"
+            >
+            <div class="image-caption">
+                <span>Thoughtful solutions</span>
+                <strong>For every learning space.</strong>
+            </div>
+            <div class="floating-note">Learn · Share · Inspire</div>
+        </div>
+    </section>
+
+    <!-- BUSINESS HIGHLIGHTS -->
+    <section class="highlights">
+        <div>
+            <strong>6 Years of Business Experience</strong>
+            <span>Trust and reliability you can count on</span>
+        </div>
+        <div>
+            <strong>Quality First</strong>
+            <span>Product-focused approach</span>
+        </div>
+        <div>
+            <strong>Customer Care</strong>
+            <span>Support you can count on</span>
+        </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="section products-section" id="products">
+        <div class="section-heading">
+            <div>
+                <div class="eyebrow">OUR PRODUCT RANGE</div>
+                <h2>The right board<br><em>for every space.</em></h2>
+            </div>
+            <p>
+                Explore our range of board solutions designed to support
+                teaching, communication, presentations and everyday work.
+            </p>
+        </div>
+
+        <div class="product-grid">
+            <a class="product-card" href="#contact">
+                <div class="product-image">
+                    <img src="https://nyblackboard.com/cdn/shop/files/satin-green-notray_1b2d408f-949f-4347-b94e-3aed8f128489_1024x1024.png?v=1706122992&utm_source=chatgpt.com" alt="Green board in an educational setting">
+                </div>
+                <div class="product-info">
+                    <span class="product-number">01 / CLASSROOM</span>
+                    <h3>Green Boards</h3>
+                    <p>A dependable classroom classic for clear, comfortable and engaging everyday teaching.</p>
+                    <span class="product-link">Enquire about this product ↗</span>
+                </div>
+            </a>
+
+            <a class="product-card" href="#contact">
+                <div class="product-image">
+                    <img src="https://www.croquart.com/media/catalog/product/p/h/photo-magnetoplan-tableau-mural-a-craie-1200-x-900-mm.jpg?utm_source=chatgpt.com" alt="Magnetic green board">
+                </div>
+                <div class="product-info">
+                    <span class="product-number">02 / CLASSROOM</span>
+                    <h3>Magnetic Green Boards</h3>
+                    <p>A practical writing and display surface for lessons, teaching materials and ideas.</p>
+                    <span class="product-link">Enquire about this product ↗</span>
+                </div>
+            </a>
+
+            <a class="product-card" href="#contact">
+                <div class="product-image">
+                    <img src="https://media.schaefer-shop.de/is/image/schaefershop/shop470_high/franken-whiteboard-u-act-line-hoch-querformat-lackiert-magnethaftend-recycelbar-mit-ablageschale-b-1600-x-h-1200-mm-img_WS_166896_A?utm_source=chatgpt.com" alt="White board for a workspace">
+                </div>
+                <div class="product-info">
+                    <span class="product-number">03 / WORKSPACE</span>
+                    <h3>White Boards</h3>
+                    <p>Keep ideas flowing with a clean surface for planning, presentations and collaboration.</p>
+                    <span class="product-link">Enquire about this product ↗</span>
+                </div>
+            </a>
+
+            <a class="product-card" href="#contact">
+                <div class="product-image">
+                    <img src="https://engineeredsolutionsdirect.com/cdn/shop/files/cork-noticeboard.jpg?v=1742479604&width=640&utm_source=chatgpt.com" alt="Notice board for displaying information">
+                </div>
+                <div class="product-info">
+                    <span class="product-number">04 / DISPLAY</span>
+                    <h3>Notice Boards</h3>
+                    <p>An organised display space for announcements, information and important updates.</p>
+                    <span class="product-link">Enquire about this product ↗</span>
+                </div>
+            </a>
+
+            <a class="product-card" href="#contact">
+                <div class="product-image">
+                    <img src="https://www.bhphotovideo.com/images/images1000x1000/smart_technologies_sbm787_smart_board_87_interactive_1774471.jpg?utm_source=chatgpt.com" alt="Interactive smart board">
+                </div>
+                <div class="product-info">
+                    <span class="product-number">05 / DIGITAL</span>
+                    <h3>Smart Boards</h3>
+                    <p>Support interactive learning and modern presentations with digital display solutions.</p>
+                    <span class="product-link">Enquire about this product ↗</span>
+                </div>
+            </a>
+
+            <a class="product-card" href="#contact">
+                <div class="product-image">
+                    <img src="https://www.boardsdirect.com.au/contents/media/l_visionchart-universal-magnetic-flipchart-easel-vfc003.jpg?utm_source=chatgpt.com" alt="Board stand for classrooms and presentations">
+                </div>
+                <div class="product-info">
+                    <span class="product-number">06 / ACCESSORIES</span>
+                    <h3>Board Stands</h3>
+                    <p>Practical and sturdy stand solutions for displaying boards in classrooms, offices and presentation spaces.</p>
+                    <span class="product-link">Enquire about this product ↗</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+        <div class="about-image">
+            <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1100&q=85" alt="Professional workspace">
+            <div class="experience-card">
+                <strong>6 Years</strong>
+                <span>Of business experience</span>
+            </div>
+        </div>
+
+        <div class="about-content">
+            <div class="eyebrow">ABOUT NAVASHAKTI MARKETING</div>
+            <h2>Built around the<br><em>power of learning.</em></h2>
+            <p>
+                At Navashakti Marketing, we believe the right tools can
+                make every learning and working environment more productive.
+            </p>
+            <p>
+                With six years of business experience, we focus on supplying
+                board solutions for educational institutions, offices and
+                organisations.
+            </p>
+            <a href="#contact" class="text-link">Connect with our team ↗</a>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section services-section" id="services">
+        <div class="section-heading">
+            <div>
+                <div class="eyebrow">HOW WE HELP</div>
+                <h2>Simple solutions.<br><em>Lasting value.</em></h2>
+            </div>
+            <p>
+                From selecting the right board to discussing your requirements,
+                we aim to make the process straightforward.
+            </p>
+        </div>
+
+        <div class="service-grid">
+            <article class="service-card">
+                <span>01</span>
+                <div class="service-icon">✳</div>
+                <h3>Product Guidance</h3>
+                <p>Find a board solution that suits your space, purpose and requirements.</p>
+            </article>
+            <article class="service-card">
+                <span>02</span>
+                <div class="service-icon">▤</div>
+                <h3>Supply Solutions</h3>
+                <p>Board options for schools, colleges, offices and other institutions.</p>
+            </article>
+            <article class="service-card">
+                <span>03</span>
+                <div class="service-icon">↗</div>
+                <h3>Enquiry Support</h3>
+                <p>Share your requirements and connect with our team for product information and quotations.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- FURNITURE COMING SOON -->
+    <section class="coming-soon">
+        <div class="coming-symbol">✳</div>
+        <div class="coming-content">
+            <div class="eyebrow">WHAT'S NEXT</div>
+            <h2>More spaces.<br><em>More possibilities.</em></h2>
+            <p>
+                We are expanding our product range.
+                Furniture solutions are coming soon.
+            </p>
+        </div>
+        <span class="coming-label">FURNITURE · COMING SOON</span>
+    </section>
+
+    <!-- CONTACT SECTION: COMPACT ENQUIRY PANEL LEFT, ADDRESS AND MAP RIGHT -->
+    <section class="section contact-section" id="contact">
+
+        <div class="panel contact-enquiry-panel">
+            <div class="eyebrow">LET'S TALK</div>
+            <h3>Start your enquiry</h3>
+            <p>
+                Have a requirement? Get in touch with Navashakti Marketing
+                for board enquiries, product information and quotations.
+            </p>
+        </div>
+
+        <div class="contact-information">
+            <div class="contact-section-heading">
+                <div class="eyebrow">VISIT OR CONNECT WITH US</div>
+                <h2>
+                    Have a requirement?<br>
+                    <em>Let's make it happen.</em>
+                </h2>
+            </div>
+
+            <div class="contact-details">
+                <div class="address-card">
+                    <h3>⌖ Visit Us</h3>
+                    <p>
+                        <strong>NAVASHAKTI MARKETING</strong><br>
+                        Plot No. 682, Sy No. 13, Jadhav Nagar,<br>
+                        Belagavi - 590001,<br>
+                        Karnataka, India
+                    </p>
+                    <div class="gst">GSTIN: 29BJLPM4916QZA</div>
+                </div>
+
+                <div class="map-card">
+                    <h3>Find our location</h3>
+                    <iframe
+                        title="Navashakti Marketing exact location"
+                        loading="lazy"
+                        src="https://maps.google.com/maps?q=15.879692,74.500522&z=17&output=embed"
+                        allowfullscreen>
+                    </iframe>
+                    <a
+                        href="https://www.google.com/maps/dir/?api=1&destination=15.879692,74.500522"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        ⌖ Get Directions ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- END CONTACT SECTION -->
+
+</main>
+
+<footer class="footer">
+    <div class="footer-brand">
+        <strong>Navashakti Marketing</strong>
+        <span>Inspiring Better Learning.</span>
+    </div>
+    <p>© 2026 Navashakti Marketing. All rights reserved.</p>
+    <a href="#home">Back to top ↑</a>
+    <span>GSTIN: 29BJLPM4916QZA</span>
+</footer>
+
+<!-- PRODUCT DETAILS POPUP -->
+<div class="product-details-modal" id="productDetailsModal" hidden>
+    <div class="product-details-backdrop" data-close-product-details></div>
+    <section class="product-details-dialog" role="dialog" aria-modal="true" aria-labelledby="productDetailsTitle">
+        <button type="button" class="product-details-close" data-close-product-details aria-label="Close product details">&times;</button>
+        <div class="eyebrow">PRODUCT DETAILS</div>
+        <h2 id="productDetailsTitle"></h2>
+        <p class="product-modal-intro" id="productDetailsIntro"></p>
+        <div class="product-details-grid" id="productDetailsGrid"></div>
+        <p class="product-details-disclaimer">Available dimensions, materials and finishes may vary by requirement and product model. Please confirm the exact specification with our team before ordering.</p>
+        <div class="product-details-actions">
+            <button type="button" class="button button-primary" id="productDetailsQuote">Request a Quotation ↗</button>
+            <button type="button" class="button button-light" data-close-product-details>Close</button>
+        </div>
+    </section>
+</div>
+<!-- END PRODUCT DETAILS POPUP -->
+
+<!-- QUOTATION POPUP -->
+<div class="quotation-modal" id="quotationModal" hidden>
+    <div class="quotation-overlay" data-close-quotation></div>
+
+    <div class="quotation-dialog">
+        <button type="button" class="quotation-close" data-close-quotation aria-label="Close quotation form">&times;</button>
+        <div class="eyebrow">REQUEST A QUOTATION</div>
+        <h2>Tell us what you need.</h2>
+        <p>Share your requirements and our team will get back to you.</p>
+
+        <form id="quotationForm">
+            <div class="form-grid">
+                <label>
+                    Full name
+                    <input type="text" id="customerName" name="name" placeholder="Enter your full name" required>
+                </label>
+                <label>
+                    Mobile number
+                    <input type="tel" id="customerPhone" name="phone" placeholder="Enter mobile number" maxlength="20" required>
+                </label>
+                <label>
+                    Email address
+                    <input type="email" id="customerEmail" name="email" placeholder="Enter email address" required>
+                </label>
+            </div>
+
+            <label>Select products</label>
+            <div class="multi-select">
+                <button type="button" class="multi-select-toggle" id="productDropdownToggle" aria-expanded="false">
+                    <span id="dropdownLabel">Choose your products</span>
+                    <span>⌄</span>
+                </button>
+
+                <div class="multi-select-menu" id="productDropdownMenu" hidden>
+                    <input type="search" id="productSearch" placeholder="Search products...">
+                    <button type="button" data-product="Green Boards">Green Boards</button>
+                    <button type="button" data-product="Magnetic Green Boards">Magnetic Green Boards</button>
+                    <button type="button" data-product="White Boards">White Boards</button>
+                    <button type="button" data-product="Notice Boards">Notice Boards</button>
+                    <button type="button" data-product="Smart Boards">Smart Boards</button>
+                    <button type="button" data-product="Board Stands">Board Stands</button>
+                </div>
+            </div>
+
+            <div id="selectedProducts" class="selected-products"></div>
+            <div id="selectedProductDetails"></div>
+            <p id="productSelectionError" hidden role="alert">Please select at least one product.</p>
+
+            <label for="additionalRequirements">Additional requirements</label>
+            <textarea id="additionalRequirements" name="additionalRequirements" rows="4" placeholder="Tell us about any additional requirements..."></textarea>
+
+            <button type="submit" class="button button-primary">Submit Quotation Request →</button>
+            <p id="quotationStatus" role="status" aria-live="polite"></p>
+        </form>
+    </div>
+</div>
+<!-- END QUOTATION POPUP -->
+
+<script>
+/* Product detail popups. Product cards and the existing quotation workflow remain intact. */
+(() => {
+    const productInfo = {
+        "Green Boards": {
+            intro: "A dependable writing surface for everyday classroom teaching and learning.",
+            details: [
+                ["Dimensions", "Standard and custom sizes may be available. Share your required width and height for confirmation."],
+                ["Surface / Material", "Green writing surface intended for chalk use. Exact surface construction should be confirmed for the selected product."],
+                ["Frame Options", "Frame material, border profile and finish are subject to the available model and should be confirmed with our team."],
+                ["Typical Usage", "Classrooms, schools, colleges, coaching centres and training spaces."]
+            ]
+        },
+        "Magnetic Green Boards": {
+            intro: "A practical combination of chalk writing and magnetic display functionality.",
+            details: [
+                ["Dimensions", "Standard and custom sizes may be available. Share your required width and height for confirmation."],
+                ["Surface / Material", "Green chalk-writing surface with magnetic display functionality. Exact construction should be confirmed for the selected model."],
+                ["Frame Options", "Frame material, border profile and finish are subject to the available model."],
+                ["Typical Usage", "Classrooms and learning spaces that need both writing and display areas."]
+            ]
+        },
+        "White Boards": {
+            intro: "A reusable writing surface for lessons, planning, presentations and collaboration.",
+            details: [
+                ["Dimensions", "Standard and custom sizes may be available. Share your required width and height for confirmation."],
+                ["Surface / Material", "White dry-erase writing surface. Surface grade and finish should be confirmed for the selected product."],
+                ["Frame Options", "Frame material, border profile and finish are subject to the available model."],
+                ["Typical Usage", "Classrooms, offices, meeting rooms, coaching centres and training spaces."]
+            ]
+        },
+        "Notice Boards": {
+            intro: "A dedicated display area for notices, schedules, announcements and updates.",
+            details: [
+                ["Dimensions", "Standard and custom sizes may be available. Share your required width and height for confirmation."],
+                ["Surface / Material", "Pin-up display surface. Exact core, fabric or covering material should be confirmed for the selected product."],
+                ["Frame Options", "Frame material, border profile and finish are subject to the available model."],
+                ["Typical Usage", "Schools, colleges, offices, institutions and shared community spaces."]
+            ]
+        },
+        "Smart Boards": {
+            intro: "Interactive digital display solutions for modern teaching and presentations.",
+            details: [
+                ["Dimensions", "Screen size and overall dimensions depend on the selected make and model."],
+                ["Display / Technology", "Interactive display features, operating system, connectivity and accessories are model-specific and must be confirmed."],
+                ["Mounting / Installation", "Wall mounting, mobile stand and installation requirements depend on the selected model and site."],
+                ["Typical Usage", "Interactive classrooms, training rooms, meeting spaces and presentations."]
+            ]
+        },
+        "Board Stands": {
+            intro: "Practical stand solutions for positioning boards in different working and learning spaces.",
+            details: [
+                ["Dimensions", "Stand height, width and board compatibility depend on the selected stand model."],
+                ["Material", "Construction material and load capacity should be confirmed for the selected product."],
+                ["Options", "Fixed or movable configurations and available finishes depend on the model."],
+                ["Typical Usage", "Classrooms, offices, training rooms, presentations and flexible workspaces."]
+            ]
+        }
+    };
+
+    const modal = document.getElementById("productDetailsModal");
+    const title = document.getElementById("productDetailsTitle");
+    const intro = document.getElementById("productDetailsIntro");
+    const grid = document.getElementById("productDetailsGrid");
+    let lastFocusedElement = null;
+
+    function closeProductDetails() {
+        modal.hidden = true;
+        document.body.style.overflow = "";
+        if (lastFocusedElement) lastFocusedElement.focus();
+    }
+
+    function openProductDetails(productName, card) {
+        const product = productInfo[productName];
+        if (!product) return;
+
+        lastFocusedElement = card;
+        title.textContent = productName;
+        intro.textContent = product.intro;
+        grid.replaceChildren();
+
+        product.details.forEach(([label, description]) => {
+            const item = document.createElement("div");
+            item.className = "product-details-item";
+
+            const heading = document.createElement("strong");
+            heading.textContent = label;
+
+            const paragraph = document.createElement("p");
+            paragraph.textContent = description;
+
+            item.append(heading, paragraph);
+            grid.append(item);
+        });
+
+        modal.hidden = false;
+        document.body.style.overflow = "hidden";
+        modal.querySelector(".product-details-close").focus();
+    }
+
+    document.querySelectorAll("#products .product-card").forEach(card => {
+        card.addEventListener("click", event => {
+            event.preventDefault();
+            const productName = card.querySelector("h3")?.textContent.trim();
+            openProductDetails(productName, card);
+        });
+    });
+
+    modal.querySelectorAll("[data-close-product-details]").forEach(button => {
+        button.addEventListener("click", closeProductDetails);
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !modal.hidden) closeProductDetails();
+    });
+
+    document.getElementById("productDetailsQuote").addEventListener("click", () => {
+        closeProductDetails();
+        const quotationTrigger = document.querySelector(".open-quotation");
+        if (quotationTrigger) quotationTrigger.click();
+        else document.getElementById("quotationModal")?.removeAttribute("hidden");
+    });
+})();
+</script>
+
+<script src="js/script.js"></script>
+
+<!-- FLOATING WHATSAPP BUTTON -->
+<a
+    class="whatsapp-float"
+    href="https://wa.me/919480539696?text=Hello%20Navashakti%20Marketing%2C%20I%27m%20interested%20in%20your%20products.%20Please%20share%20more%20details."
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with Navashakti Marketing on WhatsApp"
+>
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path fill="currentColor" d="M16 .8A15.1 15.1 0 0 0 3.1 23.8L1 31l7.4-1.9A15.2 15.2 0 1 0 16 .8Zm0 27.6a12.5 12.5 0 0 1-6.4-1.8l-.5-.3-4.4 1.1 1.2-4.3-.3-.5A12.5 12.5 0 1 1 16 28.4Zm6.9-9.4c-.4-.2-2.1-1-2.5-1.1-.3-.1-.6-.2-.8.2-.3.4-.9 1.1-1.1 1.3-.2.2-.4.3-.8.1-.4-.2-1.5-.6-2.9-1.8-1.1-1-1.8-2.2-2-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.2-.4.4-.6.1-.2 0-.5 0-.7-.1-.2-.8-1.9-1.1-2.6-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.6.1-.9.4-.3.4-1.2 1.2-1.2 2.9s1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2.8.3 1.4.5 1.8.6.8.3 1.5.2 2.1.1.6-.1 2.1-.9 2.4-1.7.3-.8.3-1.5.2-1.7-.1-.1-.4-.3-.8-.5Z"/>
+    </svg>
+    <span>Chat with us</span>
+</a>
+
+</body>
+</html>
