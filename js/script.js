@@ -794,11 +794,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (success) {
 
-            setStatus(
-                message ||
-                "Thank you. Your quotation request has been received."
-            );
+    // Send successful quotation submission event to Google Tag Manager.
+    window.dataLayer = window.dataLayer || [];
 
+    window.dataLayer.push({
+        event: "quotation_submitted"
+    });
+
+    setStatus(
+        message ||
+        "Thank you. Your quotation request has been received."
+    );
             quotationForm.reset();
 
             selectedProducts.clear();
