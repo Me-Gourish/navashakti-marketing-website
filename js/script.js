@@ -805,6 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
         message ||
         "Thank you. Your quotation request has been received."
     );
+
             quotationForm.reset();
 
             selectedProducts.clear();
